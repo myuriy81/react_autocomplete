@@ -5,7 +5,10 @@ import { peopleFromServer } from './data/people';
 import debounce from 'lodash.debounce';
 import { Person } from './types/Person';
 
-export const App: React.FC = () => {
+type AppProps = {
+  debounceDelay?: number;
+};
+export const App: React.FC<AppProps> = ({ debounceDelay = 300 }) => {
   const [query, setQuery] = useState('');
   const [onFocus, setOnFocus] = useState(false);
   const [currentPerson, setCurrentPerson] = useState<Person | null>(null);
@@ -15,10 +18,7 @@ export const App: React.FC = () => {
     ? `${currentPerson.name} (${currentPerson.born} - ${currentPerson.died})`
     : 'No selected person';
 
-  const applyQuery = useMemo(
-    () => debounce(setAppliedQuery, 300),
-    [setAppliedQuery],
-  );
+  const applyQuery = debounce(setAppliedQuery, debounceDelay);
 
   const filteredPeople = useMemo(() => {
     return peopleFromServer.filter(person => {
